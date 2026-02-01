@@ -1,7 +1,10 @@
-export default {
+import { Developers } from "@lib/constants";
+import definePlugin from "@lib/plugin";
+
+export default definePlugin({
     name: "SelfForward",
     description: "Adds the current channel and self DM to the forward list popup",
-    authors: ["VillainsRule"],
+    authors: [Developers.VillainsRule],
     patches: [
         {
             find: ".getChannelHistory(),",
@@ -25,4 +28,4 @@ export default {
     onUnload: () => {
         // Plugin unloaded
     }
-};
+});
