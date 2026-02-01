@@ -1,31 +1,46 @@
-import { Developers } from "@lib/constants";
+/*
+ * Kettu Mod for Discord
+ * Copyright (c) 2025 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 import definePlugin from "@lib/plugin";
 
 export default definePlugin({
     name: "SelfForward",
     description: "Adds the current channel and self DM to the forward list popup",
-    authors: [Developers.VillainsRule],
+    authors: ["VillainsRule"],
     patches: [
         {
             find: ".getChannelHistory(),",
             replacement: [
                 {
-                    // Remove filter that excludes current channel
-                    match: /(\i)\.filter\(\i=>\i\.id!==(\i)\.id\)/,
-                    replace: "$1"
+                    // Remove any filter checking channel id
+                    match: /\.filter\(\i=>\i\.id!==\i\.id\)/g,
+                    replace: ""
                 },
                 {
-                    // Remove filter that excludes self DM
-                    match: /\.filter\(\i=>\i\.getRecipientId\(\)!==(\i)\.id\)/,
+                    // Remove filter checking recipient id (self DM)
+                    match: /\.filter\(\i=>\i\.getRecipientId\(\)!==\i\.id\)/g,
+                    replace: ""
+                },
+                {
+                    // Alternative pattern for current channel filter
+                    match: /&&\i\.id!==\i\.id/g,
+                    replace: ""
+                },
+                {
+                    // Alternative pattern for self user filter
+                    match: /&&\i\.getRecipientId\(\)!==\i\.id/g,
                     replace: ""
                 }
             ]
         }
     ],
     onLoad: () => {
-        // Plugin loaded
+        console.log("[SelfForward] Plugin loaded");
     },
     onUnload: () => {
-        // Plugin unloaded
+        console.log("[SelfForward] Plugin unloaded");
     }
 });
