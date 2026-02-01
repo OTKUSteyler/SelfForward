@@ -1,12 +1,20 @@
-import { logger } from "@vendetta";
-import Settings from "./Settings";
-
 export default {
+    name: "SelfForward",
+    description: "Adds the current channel to the forward list popup",
+    authors: ["VillainsRule"],
+    patches: [
+        {
+            find: ".getChannelHistory(),",
+            replacement: [{
+                match: /\i.id\]/,
+                replace: "]"
+            }]
+        }
+    ],
     onLoad: () => {
-        logger.log("Hello world!");
+        // Plugin loaded
     },
     onUnload: () => {
-        logger.log("Goodbye, world.");
-    },
-    settings: Settings,
-}
+        // Plugin unloaded
+    }
+};
