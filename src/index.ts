@@ -7,7 +7,7 @@
 import { findByProps } from "@vendetta/metro";
 import { after } from "@vendetta/patcher";
 
-let unpatch;
+let unpatch: (() => void) | undefined;
 
 export default {
     onLoad: () => {
@@ -28,6 +28,8 @@ export default {
                     console.log(`[SelfForward] Found module with ${prop}:`, Object.keys(module));
                 }
             }
+            
+            console.log("[SelfForward] Plugin loaded successfully!");
         } catch (e) {
             console.error("[SelfForward] Error:", e);
         }
@@ -37,5 +39,6 @@ export default {
         if (unpatch) {
             unpatch();
         }
+        console.log("[SelfForward] Unloaded");
     }
 };
