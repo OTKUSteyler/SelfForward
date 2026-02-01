@@ -4,43 +4,38 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import definePlugin from "@lib/plugin";
+import { findByProps } from "@vendetta/metro";
+import { after } from "@vendetta/patcher";
 
-export default definePlugin({
-    name: "SelfForward",
-    description: "Adds the current channel and self DM to the forward list popup",
-    authors: ["VillainsRule"],
-    patches: [
-        {
-            find: ".getChannelHistory(),",
-            replacement: [
-                {
-                    // Remove any filter checking channel id
-                    match: /\.filter\(\i=>\i\.id!==\i\.id\)/g,
-                    replace: ""
-                },
-                {
-                    // Remove filter checking recipient id (self DM)
-                    match: /\.filter\(\i=>\i\.getRecipientId\(\)!==\i\.id\)/g,
-                    replace: ""
-                },
-                {
-                    // Alternative pattern for current channel filter
-                    match: /&&\i\.id!==\i\.id/g,
-                    replace: ""
-                },
-                {
-                    // Alternative pattern for self user filter
-                    match: /&&\i\.getRecipientId\(\)!==\i\.id/g,
-                    replace: ""
-                }
-            ]
-        }
-    ],
+let unpatch;
+
+export default {
     onLoad: () => {
-        console.log("[SelfForward] Plugin loaded");
+        try {
+            console.log("[SelfForward] Searching for modules...");
+            
+            // Search for various possible module names
+            const possibleModules = [
+                "getForwardableChannels",
+                "getChannelHistory",
+                "getForwardHistory",
+                "canForwardTo"
+            ];
+            
+            for (const prop of possibleModules) {
+                const module = findByProps(prop);
+                if (module) {
+                    console.log(`[SelfForward] Found module with ${prop}:`, Object.keys(module));
+                }
+            }
+        } catch (e) {
+            console.error("[SelfForward] Error:", e);
+        }
     },
+    
     onUnload: () => {
-        console.log("[SelfForward] Plugin unloaded");
+        if (unpatch) {
+            unpatch();
+        }
     }
-});
+};
